@@ -1,57 +1,148 @@
-var accountNo = prompt("Enter your Account Number");
-var balance = +prompt("Enter the amount you want in your Account");
+var accountNumbers = [];
+var pins = [];
+var names = [];
+var balances = [];
 
-for (var i = 0; i >= 0; i++) {
+var running = true;
+while (running) {
+  var choice = prompt(
+    "===== GRBL =====\n" +
+    "0. Create Account\n" +
+    "1. Login\n" +
+    "2. Exit"
+  );
 
-var option = prompt(
-  "Select Option:\n" +
-  "0. Exit\n" +
-  "1. Check Balance\n" +
-  "2. Deposit\n" +
-  "3. Withraw\n" +
-  "4. Transfer"
-);
+  if (choice === "0") {
+    var accNo = prompt("Enter Account Number");
+    var name = prompt("Enter Name");
+    var pin = +prompt("Enter PIN");
+    var balance = +prompt("Enter Initial Balance");
 
-if (option === "0") {
-  console.log("Thank you for using ATM");
-  break;
-}
+    var exists = false;
 
-if (option === "1"){
-  console.log("Your balance is " + balance);
-}
-else if (option === "2"){
-  var Deposit = +prompt("Enter the amount you want to deposit");
-  balance += Deposit
-  console.log("Your amount was succesfully deposit and your current balance is " + balance);
-}
+    for (var i = 0; i < accountNumbers.length; i++) {
+      if (accountNumbers[i] === accNo) {
+        exists = true;
+        break;
+      }
+    }
+    if (exists) {
+      console.log("Account Number Already Exists. Try Another One");
+    } else if (balance < 0) {
+      console.log("Balance Can't Be Negative")
+    } else {
+      accountNumbers.push(accNo);
+      pins.push(pin);
+      names.push(name);
+      balances.push(balance);
 
-else if (option === "3"){
-  var Withraw = +prompt("Enter the amount you want to withraw");
-  if (Withraw <= balance){
-    balance -= Withraw
-    console.log("Your amount was succesfully withraw and your current balance is " + balance);
+      console.log("Your Account Was Creted Successfully\n" + "Account Holder: " + name);
+    }
   }
+
+  else if (choice === "1") {
+    var logAccNo = prompt("Enter Account Number");
+    var logPin = +prompt("Enter PIN");
+    var found = false;
+    var currentUser;
+
+    for (var i = 0; i < accountNumbers.length; i++) {
+      if (accountNumbers[i] === logAccNo && pins[i] === logPin) {
+        found = true;
+        currentUser = i;
+        break;
+      }
+    }
+    if (!found) {
+      console.log("Invalid Account Number or PIN");
+    } else {
+      console.log("Welcome " + names[currentUser]);
+
+      var login = true
+
+      while (login) {
+
+        var option = prompt(
+          "Select Option:\n" +
+          "0. Check Balance\n" +
+          "1. Deposit\n" +
+          "2. Withraw\n" +
+          "3. Transfer\n" +
+          "4. Logout"
+        );
+
+        if (option === "0") {
+          console.log("Your Balance Is " + balances[currentUser]);
+        }
+
+        else if (option === "1") {
+          var deposit = +prompt("Enter The Amount You Want To Deposit");
+          if (deposit <= 0) {
+            console.log("Deposit Amount Must Be Greater Than 0")
+          } else {
+            balances[currentUser] += deposit;
+            console.log("Your Amount Was Succesfully Deposit And Your Current Balance Is " + balances[currentUser]);
+          }
+        }
+
+        else if (option === "2") {
+          var withdraw = +prompt("Enter The Amount You Want To Withdraw");
+          if (withdraw <= 0) {
+            console.log("Withdraw Amount Must Be Greater Than 0");
+          } else if (withdraw > balances[currentUser]) {
+            console.log("Insufficient Balance");
+          } else {
+            balances[currentUser] -= withdraw;
+            console.log("Your Amount Was Succesfully Withdraw And Your Current Balance Is " + balances[currentUser]);
+          }
+        }
+
+        else if (option === "3") {
+          var receiverAcc = prompt("Enter Receiver Account Number");
+          var transfer = +prompt("Enter the amount you want to Transfer");
+          var found = false;
+          var receiverUser;
+          for (var i = 0; i < accountNumbers.length; i++) {
+            if (accountNumbers[i] === receiverAcc) {
+              found = true;
+              receiverUser = i;
+              break;
+            }
+          }
+          if (!found) {
+            console.log("Receiver Account Not Found");
+          } else if (receiverUser === currentUser) {
+            console.log("You Cannot Transfer To Your Own Account");
+          } else if (transfer <= 0) {
+            console.log("Transfer Amount Must Be Greater Than 0");
+          } else if (transfer > balances[currentUser]) {
+            console.log("Insufficient Balance");
+          } else {
+            balances[currentUser] -= transfer;
+            balances[receiverUser] += transfer;
+            console.log("Transferred Successfully To " + names[receiverUser])
+            console.log("Your Current Balance Is " + balances[currentUser]);
+          }
+        }
+
+        else if (option === "4") {
+          login = false;
+          console.log("Logged Out Successfully");
+        }
+
+        else {
+          console.log("Invalid Option");
+        }
+      }
+    }
+  }
+
+  else if (choice === "2") {
+    running = false;
+    console.log("Thank You For Using The Bank");
+  }
+
   else {
-    console.log("You don't have enough balance");
+    console.log("Invalid Choice");
   }
 }
-
-else if (option === "4"){
-    var Transfer = +prompt("Enter the amount you want to Transfer");
-  if (Transfer <= balance){
-    balance -= Transfer
-    console.log("Your amount was succesfully Transfer and your current balance is " + balance);
-  }
-  else {
-    console.log("You don't have enough balance");
-  }
-}
-
-else {
-    console.log("Invalid Option");
-}
-}
-
-
- 
